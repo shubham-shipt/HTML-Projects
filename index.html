@@ -10,7 +10,6 @@
             overflow: hidden;
         }
 
-        /* Header for UI elements */
         .header {
             position: fixed;
             top: 0;
@@ -86,7 +85,6 @@
             cursor: pointer;
         }
 
-        /* Tooltip styling */
         .ui-element::after {
             content: attr(data-tooltip);
             position: absolute;
@@ -309,37 +307,18 @@
                 group.add(omText);
                 group.position.set(0, 0, 0);
                 dots();
-                for (let i = 0; i < 100; i++) {
+                for (let i = 0; i < 50; i++) { // Reduced initial particles for better performance
                     lines.forEach(line => nextDot(line));
                 }
                 updateSparklesGeometry();
             });
         }
 
-        // Function to detect the operating system
-        function getOperatingSystem() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            if (userAgent.includes("android")) {
-                return "Android";
-            } else if (userAgent.includes("windows")) {
-                return "Windows";
-            } else if (userAgent.includes("linux") && !userAgent.includes("android")) {
-                return "Linux";
-            }
-            return "Unknown";
-        }
-
         document.getElementById('submit').addEventListener('click', () => {
             const userInput = document.getElementById('name-input').value.trim().toUpperCase();
             if (userInput) {
                 addText(userInput);
-
-                // Check OS and hide UI buttons if on Android
-                const os = getOperatingSystem();
-                if (os === "Android") {
-                    const header = document.querySelector('.header');
-                    header.style.display = 'none';
-                }
+                // Header will remain visible on all devices
             } else {
                 alert("Please enter a name to visualize!");
             }
@@ -641,7 +620,8 @@
         function nextDot(line) {
             let ok = false;
             safe = 0;
-            while (!ok && safe < 300 * animationSpeed) {
+            const maxAttempts = Math.min(300, 300 * animationSpeed); // Optimize loop
+            while (!ok && safe < maxAttempts) {
                 sampler.sample(p1);
                 if (line.previous && p1.distanceTo(line.previous) < 0.08) {
                     line.coordinates.push(p1.x, p1.y, p1.z);
@@ -823,7 +803,7 @@
             bloomPass.setSize(window.innerWidth, window.innerHeight);
         }
 
-         window.onload = function() {
+        window.onload = function() {
             alert("Welcome to Particle Visualizer! Please enter a name and press the 'Submit' button to start the visualization.");
             addText('OM');
         };
