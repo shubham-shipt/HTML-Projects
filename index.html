@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Particle Visualizer</title>
+    <title>Shineword</title>
+    <link rel="icon" type="image/png" href="icons8-universe-16.png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
             overflow: hidden;
+            background: radial-gradient(circle at center, #0a0a23 0%, #000000 100%);
+            transition: background 0.5s ease;
         }
 
         .header {
@@ -15,94 +19,128 @@
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            z-index: 1;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px;
+            z-index: 100;
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(5px);
+            transition: background 0.5s ease;
         }
 
         .ui-element {
-            padding: 8px;
-            font-size: 16px;
+            padding: 5px;
+            font-size: 14px;
             border: none;
-            border-radius: 50px;
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
-            color: #fff;
-            box-shadow: 0 0 15px rgba(30, 227, 207, 0.5), inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            background: linear-gradient(145deg, #2A5470, #4C4177);
+            color: #e0e0e0;
+            box-shadow: 0 0 10px rgba(44, 62, 80, 0.5), inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.05);
             transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
         }
 
-        @keyframes glowPulse {
-            0% { box-shadow: 0 0 15px rgba(30, 227, 207, 0.5), inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(255, 255, 255, 0.1); }
-            50% { box-shadow: 0 0 25px rgba(30, 227, 207, 0.8), inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(255, 255, 255, 0.1); }
-            100% { box-shadow: 0 0 15px rgba(30, 227, 207, 0.5), inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(255, 255, 255, 0.1); }
+        .ui-element::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .ui-element:hover::before {
+            left: 100%;
+        }
+
+        @keyframes neonPulse {
+            0% { box-shadow: 0 0 10px rgba(44, 62, 80, 0.5), inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.05); }
+            50% { box-shadow: 0 0 20px rgba(44, 62, 80, 1), inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.05); }
+            100% { box-shadow: 0 0 10px rgba(44, 62, 80, 0.5), inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.05); }
         }
 
         .ui-element:hover {
-            transform: scale(1.05);
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+            transform: scale(1.03);
+            animation: neonPulse 1.5s infinite;
         }
 
         .ui-element:active {
-            transform: scale(0.95);
+            transform: scale(0.97);
         }
 
         button.ui-element {
-            padding: 8px 16px;
-            background: linear-gradient(145deg, #1EE3CF, #6B48FF);
-            color: #fff;
+            padding: 5px 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        button.ui-element:hover {
-            background: linear-gradient(145deg, #6B48FF, #1EE3CF);
+        #name-input {
+            background: linear-gradient(145deg, #2A5470, #4C4177);
+            color: #e0e0e0;
+            border: none;
+            z-index: 101;
+            font-family: 'Montserrat', sans-serif;
+            transition: background 0.5s ease;
         }
 
         #color-picker {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
-            color: #fff;
-            padding: 8px;
-            font-size: 16px;
-            border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: linear-gradient(145deg, #2A5470, #4C4177);
+            color: #e0e0e0;
+            padding: 5px;
+            font-size: 14px;
+            border-radius: 20px;
+            border: none;
+            z-index: 101;
+            font-family: 'Montserrat', sans-serif;
+            transition: background 0.5s ease;
         }
 
         #color-picker option {
-            background: #333;
-            color: #fff;
+            background: #222;
+            color: #e0e0e0;
+            font-family: 'Montserrat', sans-serif;
         }
 
         #custom-color-picker {
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             padding: 0;
             background: none;
             border: none;
             cursor: pointer;
+            z-index: 101;
         }
 
         #toggle-header {
             position: fixed;
-            top: 10px;
+            top: 50px;
             right: 10px;
-            z-index: 2;
+            z-index: 99;
+            touch-action: none;
+            display: block !important;
         }
 
         .ui-element::after {
             content: attr(data-tooltip);
             position: absolute;
-            top: -30px;
+            top: -25px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
+            color: #e0e0e0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
             white-space: nowrap;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -113,47 +151,104 @@
             opacity: 1;
         }
 
+        .custom-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: #e0e0e0;
+            border: 2px solid #4C4177;
+            border-radius: 10px;
+            padding: 15px 20px;
+            z-index: 999;
+            box-shadow: 0 0 20px rgba(78, 60, 125, 0.5);
+            font-family: 'Montserrat', sans-serif;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .custom-alert button {
+            margin-top: 10px;
+            padding: 6px 14px;
+            background: linear-gradient(145deg, #2A5470, #4C4177);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .custom-alert button:hover {
+            background: #6B48FF;
+        }
+
+        .hidden {
+            display: none;
+        }
+
         @media (max-width: 600px) {
             .header {
                 flex-direction: column;
                 align-items: flex-start;
-                padding: 5px;
-                gap: 5px;
+                padding: 4px;
+                gap: 4px;
+                display: flex !important;
             }
             .ui-element {
-                font-size: 14px;
-                padding: 6px;
+                font-size: 12px;
+                padding: 4px;
                 width: 90%;
                 margin: 0 auto;
             }
             button.ui-element {
-                padding: 6px 12px;
+                padding: 4px 8px;
                 width: 90%;
                 margin: 0 auto;
             }
+            #name-input {
+                width: 90%;
+                margin: 0 auto;
+                display: block !important;
+            }
             #color-picker {
-                font-size: 14px;
-                padding: 6px;
+                font-size: 12px;
+                padding: 4px;
                 width: 90%;
                 margin: 0 auto;
             }
             #custom-color-picker {
-                width: 40px;
-                height: 30px;
+                width: 30px;
+                height: 25px;
                 margin: 0 auto;
             }
             .ui-element::after {
-                font-size: 10px;
-                top: -25px;
+                font-size: 9px;
+                top: -20px;
             }
             #toggle-header {
-                top: 5px;
-                right: 5px;
+                top: 80px;
+                right: 10px;
+                z-index: 99;
+                display: block !important;
+                visibility: visible !important;
+            }
+            .custom-alert {
+                top: 10px;
+                padding: 10px 15px;
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
+    <div id="custom-alert" class="custom-alert hidden">
+        <p id="custom-alert-message"></p>
+        <button onclick="hideCustomAlert()">OK</button>
+    </div>
+
     <div class="header" id="header">
         <input type="text" id="name-input" class="ui-element" placeholder="Enter your name" maxlength="20" role="textbox" aria-label="Enter your name" data-tooltip="Enter text to visualize">
         <select id="color-picker" class="ui-element" aria-label="Select particle color" data-tooltip="Choose particle color scheme">
@@ -174,11 +269,14 @@
     </div>
     <button id="toggle-header" class="ui-element" role="button" aria-label="Toggle header visibility" data-tooltip="Show/Hide Controls">Show Controls</button>
 
+    <audio id="background-audio" loop preload="auto" volume="0.3">
+        <source src="sound.mp3" type="audio/mpeg">
+        Your browser does not support the audio element. Please try a different browser.
+    </audio>
+
     <script type="x-shader/x-vertex" id="vertexshader">
         attribute float size;
         attribute vec3 color;
-        attribute float fade;
-      
         varying vec3 vColor;
       
         void main() {
@@ -197,7 +295,7 @@
           gl_FragColor = gl_FragColor * texture2D(pointTexture, gl_PointCoord);
         }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://assets.codepen.io/127738/MeshSurfaceSampler_20210711.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.131.3/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.131.3/examples/js/postprocessing/EffectComposer.js"></script>
@@ -208,8 +306,8 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.131.3/examples/js/postprocessing/ShaderPass.js"></script>
     <script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></script>
     <script>
-        const pixelRatio = window.innerWidth < 600 ? 1 : 2;
-        let maxParticles = window.innerWidth < 600 ? 50000 : 100000;
+        const pixelRatio = window.innerWidth < 600 ? 1 : 1.5;
+        let maxParticles = window.innerWidth < 600 ? 30000 : 60000;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(
@@ -227,7 +325,6 @@
         document.body.appendChild(renderer.domElement);
 
         const renderScene = new THREE.RenderPass(scene, camera);
-
         const bloomPass = new THREE.UnrealBloomPass(
           new THREE.Vector2(window.innerWidth, window.innerHeight),
           1.5,
@@ -235,7 +332,7 @@
           0.85
         );
         bloomPass.threshold = 0;
-        bloomPass.strength = 0.4;
+        bloomPass.strength = 0.5;
 
         const composer = new THREE.EffectComposer(renderer);
         composer.setPixelRatio(pixelRatio);
@@ -245,8 +342,8 @@
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enablePan = false;
         controls.rotateSpeed = 1.5;
-        controls.maxDistance = 4; // Reduced max zoom distance
-        controls.minDistance = 1; // Reduced min zoom distance
+        controls.maxDistance = 10;
+        controls.minDistance = 0.1;
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
 
@@ -292,7 +389,7 @@
 
         function addText(text) {
             if (omText) group.remove(omText);
-            sparkles = [];
+            sparkles.length = 0;
             lines.forEach(line => group.remove(line));
             lines.length = 0;
 
@@ -315,28 +412,29 @@
                 const centerOffset = textGeometry.boundingBox.getCenter(new THREE.Vector3()).negate();
                 textGeometry.translate(centerOffset.x, centerOffset.y, centerOffset.z);
                 omText = new THREE.Mesh(textGeometry);
+                const sampler = new THREE.MeshSurfaceSampler(omText).build();
                 omText.visible = false;
                 group.add(omText);
                 group.position.set(0, 0, 0);
                 dots();
-                for (let i = 0; i < 50; i++) {
+                for (let i = 0; i < 30; i++) {
                     lines.forEach(line => nextDot(line));
                 }
                 updateSparklesGeometry();
             });
         }
 
-        document.getElementById('submit').addEventListener('click', () => {
+        const submitButton = document.getElementById('submit');
+        submitButton.addEventListener('click', () => {
             const userInput = document.getElementById('name-input').value.trim().toUpperCase();
             if (userInput) {
                 addText(userInput);
-                // Hide header on Android after submit
                 if (/Android/i.test(navigator.userAgent)) {
                     document.getElementById('header').style.display = 'none';
                     document.getElementById('toggle-header').textContent = 'Show Controls';
                 }
             } else {
-                alert("Please enter a name to visualize!");
+                showCustomAlert("Please enter a name to visualize!");
             }
         });
 
@@ -370,7 +468,7 @@
         });
 
         document.getElementById('density-slider').addEventListener('input', (e) => {
-            const newMaxParticles = parseInt(e.target.value) * (window.innerWidth < 600 ? 5000 : 10000);
+            const newMaxParticles = parseInt(e.target.value) * (window.innerWidth < 600 ? 3000 : 6000);
             if (newMaxParticles < maxParticles) {
                 sparkles = sparkles.slice(0, newMaxParticles);
                 updateSparklesGeometry();
@@ -378,38 +476,98 @@
             maxParticles = newMaxParticles;
         });
 
-        // Toggle Header Visibility
-        document.getElementById('toggle-header').addEventListener('click', () => {
+        const toggleHeaderButton = document.getElementById('toggle-header');
+        let isDragging = false;
+        let currentX, currentY, initialX, initialY;
+
+        toggleHeaderButton.addEventListener('mousedown', startDragging);
+        toggleHeaderButton.addEventListener('touchstart', startDragging);
+
+        function startDragging(e) {
+            isDragging = true;
+            if (e.type === 'touchstart') {
+                initialX = e.touches[0].clientX - currentX;
+                initialY = e.touches[0].clientY - currentY;
+            } else {
+                initialX = e.clientX - currentX;
+                initialY = e.clientY - currentY;
+            }
+            toggleHeaderButton.style.cursor = 'grabbing';
+        }
+
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag);
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            if (e.type === 'touchmove') {
+                currentX = e.touches[0].clientX - initialX;
+                currentY = e.touches[0].clientY - initialY;
+            } else {
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+            }
+            toggleHeaderButton.style.left = currentX + 'px';
+            toggleHeaderButton.style.top = currentY + 'px';
+            toggleHeaderButton.style.right = 'auto';
+        }
+
+        document.addEventListener('mouseup', stopDragging);
+        document.addEventListener('touchend', stopDragging);
+
+        function stopDragging() {
+            isDragging = false;
+            toggleHeaderButton.style.cursor = 'pointer';
+        }
+
+        toggleHeaderButton.addEventListener('click', () => {
             const header = document.getElementById('header');
             if (header.style.display === 'none') {
                 header.style.display = 'flex';
-                document.getElementById('toggle-header').textContent = 'Hide Controls';
+                toggleHeaderButton.textContent = 'Hide Controls';
             } else {
                 header.style.display = 'none';
-                document.getElementById('toggle-header').textContent = 'Show Controls';
+                toggleHeaderButton.textContent = 'Show Controls';
             }
+            setTimeout(() => {
+                header.style.display = header.style.display;
+            }, 0);
         });
+
+        if (/Android/i.test(navigator.userAgent)) {
+            window.addEventListener('resize', () => {
+                const header = document.getElementById('header');
+                if (header.style.display !== 'none') {
+                    header.style.display = 'flex';
+                }
+            });
+        }
 
         function updateButtonGradients() {
             const buttons = document.querySelectorAll('button.ui-element');
+            const nameInput = document.getElementById('name-input');
+            const colorPicker = document.getElementById('color-picker');
             buttons.forEach(button => {
                 const color1 = colors[0].getStyle();
                 const color2 = colors[1].getStyle();
                 button.style.background = `linear-gradient(145deg, ${color1}, ${color2})`;
                 button.style.setProperty('--hover-gradient', `linear-gradient(145deg, ${color2}, ${color1})`);
             });
+            nameInput.style.background = `linear-gradient(145deg, ${colors[0].getStyle()}, ${colors[1].getStyle()})`;
+            colorPicker.style.background = `linear-gradient(145deg, ${colors[0].getStyle()}, ${colors[1].getStyle()})`;
 
             const styleSheet = document.styleSheets[0];
-            const glowRuleIndex = Array.from(styleSheet.cssRules).findIndex(rule => rule.name === 'glowPulse');
+            const glowRuleIndex = Array.from(styleSheet.cssRules).findIndex(rule => rule.name === 'neonPulse');
             if (glowRuleIndex !== -1) {
                 styleSheet.deleteRule(glowRuleIndex);
             }
             const color1 = colors[0];
             styleSheet.insertRule(`
-                @keyframes glowPulse {
-                    0% { box-shadow: 0 0 15px rgba(${color1.r * 255}, ${color1.g * 255}, ${color1.b * 255}, 0.5), inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(255, 255, 255, 0.1); }
-                    50% { box-shadow: 0 0 25px rgba(${color1.r * 255}, ${color1.g * 255}, ${color1.b * 255}, 0.8), inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(255, 255, 255, 0.1); }
-                    100% { box-shadow: 0 0 15px rgba(${color1.r * 255}, ${color1.g * 255}, ${color1.b * 255}, 0.5), inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(255, 255, 255, 0.1); }
+                @keyframes neonPulse {
+                    0% { box-shadow: 0 0 10px rgba(${color1.r * 255}, ${color1.g * 255}, ${color1.b * 255}, 0.5), inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.05); }
+                    50% { box-shadow: 0 0 20px rgba(${color1.r * 255}, ${color1.g * 255}, ${color1.b * 255}, 1), inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.05); }
+                    100% { box-shadow: 0 0 10px rgba(${color1.r * 255}, ${color1.g * 255}, ${color1.b * 255}, 0.5), inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.05); }
                 }
             `, glowRuleIndex === -1 ? styleSheet.cssRules.length : glowRuleIndex);
 
@@ -422,6 +580,8 @@
                     background: var(--hover-gradient);
                 }
             `, hoverRuleIndex === -1 ? styleSheet.cssRules.length : hoverRuleIndex);
+
+            document.body.style.background = `radial-gradient(circle at center, ${colors[0].getStyle()} 0%, #000000 100%)`;
         }
 
         document.getElementById('color-picker').addEventListener('change', (e) => {
@@ -530,21 +690,25 @@
 
         function updateColors() {
             lines.forEach((line, i) => {
-                line.material.color = colors[i % colors.length];
+                if (line.material) line.material.color = colors[i % colors.length];
             });
             sparkles.forEach((sparkle, i) => {
-                sparkle.color = colors[i % colors.length];
+                if (sparkle) sparkle.color = colors[i % colors.length];
             });
             updateSparklesGeometry();
             let tempGalaxyColors = [];
             stars.forEach((star, i) => {
-                star.color = galaxyColors[i % galaxyColors.length];
-                tempGalaxyColors.push(star.color.r, star.color.g, star.color.b);
+                if (star) {
+                    star.color = galaxyColors[i % galaxyColors.length];
+                    tempGalaxyColors.push(star.color.r, star.color.g, star.color.b);
+                }
             });
-            starsGeometry.setAttribute(
-                "color",
-                new THREE.Float32BufferAttribute(tempGalaxyColors, 3)
-            );
+            if (starsGeometry) {
+                starsGeometry.setAttribute(
+                    "color",
+                    new THREE.Float32BufferAttribute(tempGalaxyColors, 3)
+                );
+            }
         }
 
         let moveForward = false;
@@ -555,65 +719,41 @@
         let moveDown = false;
         let targetZoom = camera.position.z;
 
-        document.addEventListener('keydown', (event) => {
+        function handleKeyDown(event) {
             switch (event.code) {
-                case 'KeyW':
-                    moveForward = true;
-                    break;
-                case 'KeyS':
-                    moveBackward = true;
-                    break;
-                case 'KeyA':
-                    moveLeft = true;
-                    break;
-                case 'KeyD':
-                    moveRight = true;
-                    break;
-                case 'KeyE':
-                    moveUp = true;
-                    break;
-                case 'KeyQ':
-                    moveDown = true;
-                    break;
+                case 'KeyW': moveForward = true; break;
+                case 'KeyS': moveBackward = true; break;
+                case 'KeyA': moveLeft = true; break;
+                case 'KeyD': moveRight = true; break;
+                case 'KeyE': moveUp = true; break;
+                case 'KeyQ': moveDown = true; break;
                 case 'NumpadAdd':
-                case 'Equal':
-                    targetZoom -= 0.2; // Reduced zoom step
-                    break;
+                case 'Equal': targetZoom -= 0.5; break;
                 case 'NumpadSubtract':
-                case 'Minus':
-                    targetZoom += 0.2; // Reduced zoom step
-                    break;
+                case 'Minus': targetZoom += 0.5; break;
             }
-            targetZoom = Math.max(1, Math.min(4, targetZoom)); // Clamp zoom
-        });
+            targetZoom = Math.max(0.1, Math.min(10, targetZoom));
+        }
 
-        document.addEventListener('keyup', (event) => {
+        function handleKeyUp(event) {
             switch (event.code) {
-                case 'KeyW':
-                    moveForward = false;
-                    break;
-                case 'KeyS':
-                    moveBackward = false;
-                    break;
-                case 'KeyA':
-                    moveLeft = false;
-                    break;
-                case 'KeyD':
-                    moveRight = false;
-                    break;
-                case 'KeyE':
-                    moveUp = false;
-                    break;
-                case 'KeyQ':
-                    moveDown = false;
-                    break;
+                case 'KeyW': moveForward = false; break;
+                case 'KeyS': moveBackward = false; break;
+                case 'KeyA': moveLeft = false; break;
+                case 'KeyD': moveRight = false; break;
+                case 'KeyE': moveUp = false; break;
+                case 'KeyQ': moveDown = false; break;
             }
-        });
+        }
 
-        document.addEventListener('wheel', (event) => {
-            targetZoom += event.deltaY * 0.002; // Reduced wheel sensitivity
-            targetZoom = Math.max(1, Math.min(4, targetZoom)); // Clamp zoom
-        });
+        function handleWheel(event) {
+            targetZoom += event.deltaY * 0.01;
+            targetZoom = Math.max(0.1, Math.min(10, targetZoom));
+        }
+
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+        document.addEventListener('wheel', handleWheel);
 
         function updateCamera() {
             const speed = 0.05;
@@ -624,9 +764,8 @@
             if (moveUp) camera.position.y += speed;
             if (moveDown) camera.position.y -= speed;
 
-            // Smooth zoom using lerp
-            camera.position.z += (targetZoom - camera.position.z) * 0.1; // Smooth zoom transition
-            camera.position.z = Math.max(1, Math.min(4, camera.position.z)); // Clamp zoom
+            camera.position.z += (targetZoom - camera.position.z) * 0.08;
+            camera.position.z = Math.max(0.1, Math.min(10, camera.position.z));
         }
 
         function dots() {
@@ -652,7 +791,7 @@
         function nextDot(line) {
             let ok = false;
             safe = 0;
-            const maxAttempts = Math.min(300, 300 * animationSpeed);
+            const maxAttempts = 200 * animationSpeed;
             while (!ok && safe < maxAttempts) {
                 sampler.sample(p1);
                 if (line.previous && p1.distanceTo(line.previous) < 0.08) {
@@ -660,7 +799,7 @@
                     line.previous = p1.clone();
 
                     if (sparkles.length < maxParticles) {
-                        for (let i = 0; i < 2; i++) {
+                        for (let i = 0; i < 1; i++) {
                             const spark = new Sparkle();
                             spark.setup(p1, line.material.color);
                             sparkles.push(spark);
@@ -675,14 +814,17 @@
         }
 
         function updateSparklesGeometry() {
-            let tempSparklesArraySizes = [];
-            let tempSparklesArrayColors = [];
-            let tempSparklesArrayPositions = [];
-            sparkles.forEach((s) => {
-                tempSparklesArraySizes.push(s.size);
-                tempSparklesArrayColors.push(s.color.r, s.color.g, s.color.b);
-                tempSparklesArrayPositions.push(s.x, s.y, s.z);
-            });
+            const tempSparklesArraySizes = [];
+            const tempSparklesArrayColors = [];
+            const tempSparklesArrayPositions = [];
+            for (let i = 0; i < sparkles.length; i++) {
+                const s = sparkles[i];
+                if (s) {
+                    tempSparklesArraySizes.push(s.size);
+                    tempSparklesArrayColors.push(s.color.r, s.color.g, s.color.b);
+                    tempSparklesArrayPositions.push(s.x, s.y, s.z);
+                }
+            }
             sparklesGeometry.setAttribute(
                 "position",
                 new THREE.Float32BufferAttribute(tempSparklesArrayPositions, 3)
@@ -718,17 +860,17 @@
                 this.v.z = THREE.MathUtils.randFloat(0.001, 0.006) * animationSpeed;
                 this.v.z *= Math.random() > 0.5 ? 1 : -1;
 
-                this.size = Math.random() * 4 + 0.5 * pixelRatio;
+                this.size = Math.random() * 3 + 0.5 * pixelRatio;
                 this.slowDown = 0.4 + Math.random() * 0.58;
                 this.color = color;
             }
             update() {
                 this.age++;
-                if (this.age > 300 / animationSpeed) {
+                if (this.age > 200 / animationSpeed) {
                     this.dead = true;
                     return;
                 }
-                if (this.v.x > 0.001 || this.v.y > 0.001 || this.v.z > 0.001) {
+                if (Math.abs(this.v.x) > 0.001 || Math.abs(this.v.y) > 0.001 || Math.abs(this.v.z) > 0.001) {
                     this.add(this.v);
                     this.v.multiplyScalar(this.slowDown);
                 }
@@ -736,25 +878,26 @@
         }
 
         class Star {
-            setup(color) {
-                this.r = Math.random() * 3 + 1;
+            constructor() {
+                this.r = Math.random() * 8 + 3;
                 this.phi = Math.random() * Math.PI * 2;
                 this.theta = Math.random() * Math.PI;
                 this.v = new THREE.Vector2().random().subScalar(0.5).multiplyScalar(0.0007);
-
+                this.size = Math.random() * 2.5 + 0.5 * pixelRatio;
+            }
+            setup(color) {
+                this.color = color;
+                this.updatePosition();
+            }
+            updatePosition() {
                 this.x = this.r * Math.sin(this.phi) * Math.sin(this.theta);
                 this.y = this.r * Math.cos(this.phi);
                 this.z = this.r * Math.sin(this.phi) * Math.cos(this.theta);
-
-                this.size = Math.random() * 4 + 0.5 * pixelRatio;
-                this.color = color;
             }
             update() {
-                this.phi += this.v.x * animationSpeed;
-                this.theta += this.v.y * animationSpeed;
-                this.x = this.r * Math.sin(this.phi) * Math.sin(this.theta);
-                this.y = this.r * Math.cos(this.phi);
-                this.z = this.r * Math.sin(this.phi) * Math.cos(this.theta);
+                this.phi += this.v.x * 0.5;
+                this.theta += this.v.y * 0.5;
+                this.updatePosition();
             }
         }
 
@@ -763,7 +906,8 @@
         const galaxyGeometryColors = [];
         const galaxyGeometrySizes = [];
 
-        for (let i = 0; i < (window.innerWidth < 600 ? 500 : 1000); i++) {
+        const starCount = window.innerWidth < 600 ? 600 : 1200;
+        for (let i = 0; i < starCount; i++) {
             const star = new Star();
             star.setup(galaxyColors[Math.floor(Math.random() * galaxyColors.length)]);
             galaxyGeometryVertices.push(star.x, star.y, star.z);
@@ -786,13 +930,12 @@
         let _prev = 0;
         function render(a) {
             if (autoRotate) group.rotation.y += 0.001 * animationSpeed;
-
-            galaxyPoints.rotation.y += 0.0005 * animationSpeed;
+            galaxyPoints.rotation.y += 0.0005;
 
             if (a - _prev > 30 / animationSpeed) {
                 lines.forEach((l) => {
                     if (sparkles.length < maxParticles) {
-                        for (let i = 0; i < 2 * animationSpeed; i++) nextDot(l);
+                        for (let i = 0; i < 1 * animationSpeed; i++) nextDot(l);
                     }
                     const tempVertices = new Float32Array(l.coordinates);
                     l.geometry.setAttribute(
@@ -807,15 +950,19 @@
                 _prev = a;
             }
 
-            let tempStarsArray = [];
-            stars.forEach((s) => {
-                s.update();
-                tempStarsArray.push(s.x, s.y, s.z);
-            });
-
+            const tempStarsArray = new Float32Array(stars.length * 3);
+            for (let i = 0; i < stars.length; i++) {
+                const s = stars[i];
+                if (s) {
+                    s.update();
+                    tempStarsArray[i * 3] = s.x;
+                    tempStarsArray[i * 3 + 1] = s.y;
+                    tempStarsArray[i * 3 + 2] = s.z;
+                }
+            }
             starsGeometry.setAttribute(
                 "position",
-                new THREE.Float32BufferAttribute(tempStarsArray, 3)
+                new THREE.BufferAttribute(tempStarsArray, 3)
             );
 
             updateCamera();
@@ -825,19 +972,38 @@
 
         renderer.setAnimationLoop(render);
 
-        window.addEventListener("resize", onWindowResize);
-
-        function onWindowResize() {
+        window.addEventListener("resize", () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             composer.setSize(window.innerWidth, window.innerHeight);
             renderer.setSize(window.innerWidth, window.innerHeight);
             bloomPass.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        const audio = document.getElementById('background-audio');
+        function playAudio() {
+            audio.play().catch(error => {
+                console.log("Autoplay failed:", error);
+                document.addEventListener('click', () => {
+                    audio.play();
+                }, { once: true });
+            });
+        }
+
+        function showCustomAlert(message) {
+            const alertMessage = document.getElementById('custom-alert-message');
+            alertMessage.textContent = message;
+            document.getElementById('custom-alert').classList.remove('hidden');
+        }
+
+        function hideCustomAlert() {
+            document.getElementById('custom-alert').classList.add('hidden');
         }
 
         window.onload = function() {
-            alert("Welcome to Particle Visualizer! Please enter a name and press the 'Submit' button to start the visualization.");
+            showCustomAlert(" Please enter a name and press the 'Submit' button to start the visualization.");
             addText('OM');
+            playAudio();
         };
     </script>
 </body>
