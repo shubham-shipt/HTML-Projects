@@ -85,6 +85,13 @@
             cursor: pointer;
         }
 
+        #toggle-header {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 2;
+        }
+
         .ui-element::after {
             content: attr(data-tooltip);
             position: absolute;
@@ -139,11 +146,15 @@
                 font-size: 10px;
                 top: -25px;
             }
+            #toggle-header {
+                top: 5px;
+                right: 5px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
+    <div class="header" id="header">
         <input type="text" id="name-input" class="ui-element" placeholder="Enter your name" maxlength="20" role="textbox" aria-label="Enter your name" data-tooltip="Enter text to visualize">
         <select id="color-picker" class="ui-element" aria-label="Select particle color" data-tooltip="Choose particle color scheme">
             <option value="default">Choose Color</option>
@@ -161,6 +172,7 @@
         <button id="toggle-rotate" class="ui-element" role="button" aria-label="Toggle auto rotation" data-tooltip="Toggle auto rotation">Toggle Rotate</button>
         <button id="export-image" class="ui-element" role="button" aria-label="Export as image" data-tooltip="Export as image">Export Image</button>
     </div>
+    <button id="toggle-header" class="ui-element" role="button" aria-label="Toggle header visibility" data-tooltip="Show/Hide Controls">Show Controls</button>
 
     <script type="x-shader/x-vertex" id="vertexshader">
         attribute float size;
@@ -233,8 +245,8 @@
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enablePan = false;
         controls.rotateSpeed = 1.5;
-        controls.maxDistance = 5;
-        controls.minDistance = 0.5;
+        controls.maxDistance = 4; // Reduced max zoom distance
+        controls.minDistance = 1; // Reduced min zoom distance
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
 
@@ -307,7 +319,7 @@
                 group.add(omText);
                 group.position.set(0, 0, 0);
                 dots();
-                for (let i = 0; i < 50; i++) { // Reduced initial particles for better performance
+                for (let i = 0; i < 50; i++) {
                     lines.forEach(line => nextDot(line));
                 }
                 updateSparklesGeometry();
@@ -318,7 +330,11 @@
             const userInput = document.getElementById('name-input').value.trim().toUpperCase();
             if (userInput) {
                 addText(userInput);
-                // Header will remain visible on all devices
+                // Hide header on Android after submit
+                if (/Android/i.test(navigator.userAgent)) {
+                    document.getElementById('header').style.display = 'none';
+                    document.getElementById('toggle-header').textContent = 'Show Controls';
+                }
             } else {
                 alert("Please enter a name to visualize!");
             }
@@ -360,6 +376,18 @@
                 updateSparklesGeometry();
             }
             maxParticles = newMaxParticles;
+        });
+
+        // Toggle Header Visibility
+        document.getElementById('toggle-header').addEventListener('click', () => {
+            const header = document.getElementById('header');
+            if (header.style.display === 'none') {
+                header.style.display = 'flex';
+                document.getElementById('toggle-header').textContent = 'Hide Controls';
+            } else {
+                header.style.display = 'none';
+                document.getElementById('toggle-header').textContent = 'Show Controls';
+            }
         });
 
         function updateButtonGradients() {
@@ -525,6 +553,7 @@
         let moveRight = false;
         let moveUp = false;
         let moveDown = false;
+        let targetZoom = camera.position.z;
 
         document.addEventListener('keydown', (event) => {
             switch (event.code) {
@@ -548,13 +577,14 @@
                     break;
                 case 'NumpadAdd':
                 case 'Equal':
-                    camera.position.z -= 0.1;
+                    targetZoom -= 0.2; // Reduced zoom step
                     break;
                 case 'NumpadSubtract':
                 case 'Minus':
-                    camera.position.z += 0.1;
+                    targetZoom += 0.2; // Reduced zoom step
                     break;
             }
+            targetZoom = Math.max(1, Math.min(4, targetZoom)); // Clamp zoom
         });
 
         document.addEventListener('keyup', (event) => {
@@ -581,8 +611,8 @@
         });
 
         document.addEventListener('wheel', (event) => {
-            camera.position.z += event.deltaY * 0.005;
-            camera.position.z = Math.max(0.5, Math.min(5, camera.position.z));
+            targetZoom += event.deltaY * 0.002; // Reduced wheel sensitivity
+            targetZoom = Math.max(1, Math.min(4, targetZoom)); // Clamp zoom
         });
 
         function updateCamera() {
@@ -594,7 +624,9 @@
             if (moveUp) camera.position.y += speed;
             if (moveDown) camera.position.y -= speed;
 
-            camera.position.z = Math.max(0.5, Math.min(5, camera.position.z));
+            // Smooth zoom using lerp
+            camera.position.z += (targetZoom - camera.position.z) * 0.1; // Smooth zoom transition
+            camera.position.z = Math.max(1, Math.min(4, camera.position.z)); // Clamp zoom
         }
 
         function dots() {
@@ -620,7 +652,7 @@
         function nextDot(line) {
             let ok = false;
             safe = 0;
-            const maxAttempts = Math.min(300, 300 * animationSpeed); // Optimize loop
+            const maxAttempts = Math.min(300, 300 * animationSpeed);
             while (!ok && safe < maxAttempts) {
                 sampler.sample(p1);
                 if (line.previous && p1.distanceTo(line.previous) < 0.08) {
