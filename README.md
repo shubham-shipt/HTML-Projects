@@ -60,7 +60,7 @@
 
 ## 🙌 Author
 
-Created by **Shubham Singh**
+Created by **Shubham Singh***
 
 ---
 
