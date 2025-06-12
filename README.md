@@ -1,5 +1,5 @@
 
-# sparkname
+# Shinewors
 
 **sparkname** is a simple and interactive 3D particle name visualizer built using Three.js. It lets users type a name or word and see it animated in glowing particles with beautiful colors.
 
